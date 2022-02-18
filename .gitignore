@@ -51,8 +51,4 @@ docs/_build/
 .env
 
 .idea/
-task.md
-*.pdf
-*.png
-Models/*
 
