@@ -51,4 +51,6 @@ docs/_build/
 .env
 
 .idea/
+Models/*
+Yolov5_detect_person/model_yolov5/*
 
