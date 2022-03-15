@@ -123,15 +123,27 @@ def pose_estimate(cam, pose_queue, action_data_queue):
     while cam.cap.isOpened():
         track_bbs_ids, boxes, labels, scores, unm_trk_ext, image_rgb, frame_count = pose_queue.get()
         if len(track_bbs_ids) > 0:
+            # Using mmpose 28 FPS
+            # start_time = time.time()
             pose_results = mmpose_inference(track_bbs_ids[:, 0:4], image_rgb)
-            boxes_detect_pose = torch.as_tensor(track_bbs_ids[:, 0:4])
-            scores = torch.as_tensor(np.ones(len(track_bbs_ids)))
-            start_time = time.time()
-            poses = pose_model.predict(image_rgb, boxes_detect_pose, scores)
-            print("pose_estimate cost: ", time.time() - start_time)
-            key_points_pose = [np.concatenate((ps['keypoints'].numpy(), ps['kp_score'].numpy()), axis=1) for ps in poses]
-            # print("key_points_pose: ", key_points_pose)
+            key_points_pose = [np.delete(ps["keypoints"], [1, 2, 3, 4], axis=0) for ps in pose_results]
+            # key_points_pose = np.delete(pose_results[0]["keypoints"], [1, 2, 3, 4], axis=0)
+            # print("mmpose cost: ", time.time() - start_time)
+            # frame_show = draw_det_when_track(image_rgb, track_bbs_ids[:, 0:4])
+            # frame_show = draw_det_when_track(frame_show, [pose_results[0]["bbox"]])
+            # frame_show = draw_single_pose(frame_show, pose_results[0]["keypoints"], joint_format='coco')
+            # cv2.imshow('test', cv2.resize(frame_show, (1000, 800)))
+            # if cv2.waitKey(0) & 0xFF == ord("q"):
+            #     cv2.destroyWindow('test')
 
+            # # Using alphapose 17 FPS
+            # boxes_detect_pose = torch.as_tensor(track_bbs_ids[:, 0:4])
+            # scores = torch.as_tensor(np.ones(len(track_bbs_ids)))
+            # start_time = time.time()
+            # poses = pose_model.predict(image_rgb, boxes_detect_pose, scores)
+            # print("alphapose cost: ", time.time() - start_time)
+            # key_points_pose = [np.concatenate((ps['keypoints'].numpy(), ps['kp_score'].numpy()), axis=1) for ps in poses]
+            # # print("key_points_pose: ", key_points_pose)
             current_track_id = track_bbs_ids[:, -1]
             if len(data_action_rec) > 0:
                 pre_track_id = list(map(lambda d: d['track_id'], data_action_rec))
@@ -142,7 +154,6 @@ def pose_estimate(cam, pose_queue, action_data_queue):
                     index_del = pre_track_id.index(track_id)
                     del data_action_rec[index_del]
                     pre_track_id.remove(track_id)
-                    a = 0
 
             if len(key_points_pose) == len(current_track_id):
                 for i in range(len(current_track_id)):
@@ -254,7 +265,7 @@ def main(input_path, thread_fall_down_manager, cv2_show=True):
         if cv2_show:
             cv2.imshow('output_fall_down', image)
             if cv2.waitKey(1) & 0xFF == ord("q"):
-                cv2.destroyWindow('output')
+                cv2.destroyWindow('output_fall_down')
                 break
 
     total_time = time.time() - start_time
@@ -269,7 +280,8 @@ def main(input_path, thread_fall_down_manager, cv2_show=True):
 
 
 if __name__ == '__main__':
-    input_path = "/storages/data/DATA/Clover_data/Video_Test/te_nga.mp4"
+    # input_path = "/storages/data/DATA/Clover_data/Video_Test/te_nga.mp4"
+    input_path = "/media/vuong/AI1/Data_clover/Video_test/Te nga/te_nga.mp4"
     thread_fall_down_manager = []
     main(input_path, thread_fall_down_manager, cv2_show=True)
 

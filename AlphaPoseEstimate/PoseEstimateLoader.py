@@ -31,19 +31,13 @@ class SPPE_FastPose(object):
         self.model.eval()
 
     def predict(self, image, bboxs, bboxs_scores):
-        start_time = time.time()
         inps, pt1, pt2 = crop_dets(image, bboxs, self.inp_h, self.inp_w)
-        print("crop_dets cost: ", time.time() - start_time)
-        start_time = time.time()
         pose_hm = self.model(inps.to(self.device)).cpu().data
-        print("pose_model cost: ", time.time() - start_time)
 
         # Cut eyes and ears.
         pose_hm = torch.cat([pose_hm[:, :1, ...], pose_hm[:, 5:, ...]], dim=1)
 
         xy_hm, xy_img, scores = getPrediction(pose_hm, pt1, pt2, self.inp_h, self.inp_w,
                                               pose_hm.shape[-2], pose_hm.shape[-1])
-        start_time = time.time()
         result = pose_nms(bboxs, bboxs_scores, xy_img, scores)
-        print("pose_nms cost: ", time.time() - start_time)
         return result

@@ -53,4 +53,5 @@ docs/_build/
 .idea/
 Models/*
 Yolov5_detect_person/model_yolov5/*
+Mmpose/Models/*
 

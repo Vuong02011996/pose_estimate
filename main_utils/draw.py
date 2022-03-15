@@ -35,6 +35,21 @@ def draw_region(image, region):
 
 def draw_det_when_track(image, boxes, scores=None, labels=None, class_names=None, line_thickness=2, font_scale=1.0,
                font_thickness=2):
+    print(image.shape)
+    print(boxes)
+    print(scores)
+    print(labels)
+    """
+    :param image: (1440, 2560, 3)
+    :param boxes: [[2197, 744, 2358, 996], [1603, 803, 1777, 1045]...]
+    :param scores: [0.5118125081062317,..]
+    :param labels: ['person',...]
+    :param class_names: 
+    :param line_thickness: 
+    :param font_scale: 
+    :param font_thickness: 
+    :return: 
+    """
     if scores is not None and labels is not None:
         for b, l, s in zip(boxes, labels, scores):
             if class_names is None:
@@ -112,6 +127,18 @@ def show_stream(image_show, track_bbs_ids, list_name, frame_count, total_frame):
 
 
 def draw_single_pose(frame, pts, joint_format='coco'):
+    """
+
+    :param frame: (1440, 2560, 3)
+    :param pts: (13, 3)
+    [[     2235.9       307.3     0.91427]
+     [     2248.7      326.47     0.90268]
+    ...
+     [     2213.6      396.76      0.7945]
+     [     2216.8      428.71     0.54291]]
+    :param joint_format:
+    :return:
+    """
     RED = (0, 0, 255)
     GREEN = (0, 255, 0)
     BLUE = (255, 0, 0)

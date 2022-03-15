@@ -15,6 +15,8 @@
   + The most important feature of Alpha-Pose is that it can be extended to any blend of a **person detection** algorithm and an **SPPE**.
 ### Installation
   + Copy folder PoseEstimate is done.
+### Performance
+  + Cost time by pre-processing.
 ## OpenPose
   + [github_link](https://github.com/CMU-Perceptual-Computing-Lab/openpose)
   + Hard to build (C++)
@@ -38,6 +40,9 @@
 
 ### Installation
 ```commandline
+git clone git@github.com:open-mmlab/mmpose.git
+conda create -n open-mmlab python=3.7 -y
+conda activate open-mmlab
 conda install pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=10.2 -c pytorch
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.8.0/index.html
 pip install -r requirements.txt
